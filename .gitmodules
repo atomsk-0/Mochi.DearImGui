@@ -1,7 +1,7 @@
 [submodule "external/imgui"]
 	path = external/imgui
-	url = https://github.com/ocornut/imgui.git
-	branch = docking
+	url = https://github.com/atomsk-0/imgui.git
+	branch = master
 [submodule "external/Biohazrd"]
 	path = external/Biohazrd
 	url = https://github.com/MochiLibraries/Biohazrd.git

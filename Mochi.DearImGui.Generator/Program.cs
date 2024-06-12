@@ -90,6 +90,8 @@ libraryBuilder.AddCommandLineArgument($"-I{imGuiSourceDirectoryPath}");
 libraryBuilder.AddCommandLineArgument($"-DIMGUI_USER_CONFIG=\"{imGuiConfigFilePath}\"");
 libraryBuilder.AddFile(imGuiHeaderFilePath);
 libraryBuilder.AddFile(Path.Combine(imGuiSourceDirectoryPath, "imgui_internal.h"));
+libraryBuilder.AddFile(Path.Combine(imGuiSourceDirectoryPath, "imgui_impl_win32.h"));
+libraryBuilder.AddFile(Path.Combine(imGuiSourceDirectoryPath, "imgui_impl_dx9.h"));
 
 TranslatedLibrary library = libraryBuilder.Create();
 TranslatedLibraryConstantEvaluator constantEvaluator = libraryBuilder.CreateConstantEvaluator();
