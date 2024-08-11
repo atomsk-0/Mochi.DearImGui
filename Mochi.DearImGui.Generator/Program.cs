@@ -8,6 +8,7 @@ using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -45,6 +46,7 @@ else
 }
 
 string imGuiSourceDirectoryPath = Path.GetFullPath(args[0]);
+string imguiBackendDirectoryPath = Path.Combine(imGuiSourceDirectoryPath, "backends");
 string imGuiHeaderFilePath = Path.Combine(imGuiSourceDirectoryPath, "imgui.h");
 
 string dearImGuiNativeRootPath = Path.GetFullPath(args[1]);
@@ -85,13 +87,30 @@ TranslatedLibraryBuilder libraryBuilder = new()
         EnableTemplateSupport = false,
     }
 };
+
+string[] backendFiles = {"imgui_impl_win32.h", "imgui_impl_win32.cpp", "imgui_impl_dx9.h", "imgui_impl_dx9.cpp"};
+
+// Copy backend files to sourceDirectory temporarily
+foreach (string file in backendFiles)
+{
+    string path = Path.Combine(imguiBackendDirectoryPath, file);
+    if (File.Exists(path) == false) continue;
+    File.Copy(path, Path.Combine(imGuiSourceDirectoryPath, file));
+}
+
 libraryBuilder.AddCommandLineArgument("--language=c++");
 libraryBuilder.AddCommandLineArgument($"-I{imGuiSourceDirectoryPath}");
 libraryBuilder.AddCommandLineArgument($"-DIMGUI_USER_CONFIG=\"{imGuiConfigFilePath}\"");
 libraryBuilder.AddFile(imGuiHeaderFilePath);
 libraryBuilder.AddFile(Path.Combine(imGuiSourceDirectoryPath, "imgui_internal.h"));
-libraryBuilder.AddFile(Path.Combine(imGuiSourceDirectoryPath, "imgui_impl_win32.h"));
-libraryBuilder.AddFile(Path.Combine(imGuiSourceDirectoryPath, "imgui_impl_dx9.h"));
+
+// Include backend header files
+foreach (string file in backendFiles)
+{
+    string path = Path.Combine(imGuiSourceDirectoryPath, file);
+    if (File.Exists(path) == false || file.Split('.').Last() != "h") continue;
+    libraryBuilder.AddFile(path);
+}
 
 TranslatedLibrary library = libraryBuilder.Create();
 TranslatedLibraryConstantEvaluator constantEvaluator = libraryBuilder.CreateConstantEvaluator();
@@ -196,6 +215,14 @@ diagnostics.AddCategory("Generation Diagnostics", generationDiagnostics, "Genera
 
 using StreamWriter diagnosticsOutput = outputSession.Open<StreamWriter>("Diagnostics.log");
 diagnostics.WriteOutDiagnostics(diagnosticsOutput, writeToConsole: true);
+
+// Remove copied backend files
+foreach (string file in backendFiles)
+{
+    string path = Path.Combine(imGuiSourceDirectoryPath, file);
+    if (File.Exists(path) == false) continue;
+    File.Delete(path);
+}
 
 outputSession.Dispose();
 return 0;
