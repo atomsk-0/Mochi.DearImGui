@@ -5,5 +5,4 @@ using Mochi.DearImGui;
 unsafe
 {
     ImGui.CreateContext();
-    ImGui.ImGui_ImplWin32_Init(null);
 }

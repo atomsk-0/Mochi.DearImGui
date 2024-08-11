@@ -37,9 +37,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${OUTPUT_DIRECTORY}")
 file(GLOB IMGUI_SOURCES "${IMGUI_SOURCE_DIRECTORY}*.cpp")
 link_libraries(${GLFW_LIB})
 
-# Add the following lines to resolve linker warnings and errors
 if (WIN32)
-   # add_link_options(/NODEFAULTLIB:MSVCRT)
    link_libraries(legacy_stdio_definitions)
 endif()
 

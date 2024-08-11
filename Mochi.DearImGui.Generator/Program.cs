@@ -113,6 +113,7 @@ libraryBuilder.AddFile(Path.Combine(imGuiSourceDirectoryPath, "imgui_internal.h"
 foreach (string file in backendFiles)
 {
     string path = Path.Combine(imGuiSourceDirectoryPath, file);
+    if (file.Contains("loader")) continue;
     if (File.Exists(path) == false || file.Split('.').Last() != "h") continue;
     Console.WriteLine("Adding backend header file: " + file);
     libraryBuilder.AddFile(path);
@@ -154,7 +155,42 @@ library = new MochiDearImGuiNamespaceTransformation().Transform(library);
 library = new RemoveIllegalImVectorReferencesTransformation().Transform(library);
 library = new MoveLooseDeclarationsIntoTypesTransformation
 (
-    (c, d) => d.Namespace == "Mochi.DearImGui" ? "ImGui" : d.Namespace == "Mochi.DearImGui.Internal" ? "ImGuiInternal" : "Globals"
+    (c, d) =>
+    {
+        if (d.Namespace == "Mochi.DearImGui")
+        {
+            return "ImGui";
+        }
+        if (d.Namespace == "Mochi.DearImGui.Internal")
+        {
+            return "ImGuiInternal";
+        }
+        if (d.Namespace == "Mochi.DearImGui.Backends.Direct3D9")
+        {
+            return "Direct3D9ImBackend";
+        }
+        if (d.Namespace == "Mochi.DearImGui.Backends.Direct3D11")
+        {
+            return "Direct3D11ImBackend";
+        }
+        if (d.Namespace == "Mochi.DearImGui.Backends.Direct3D12")
+        {
+            return "Direct3D12ImBackend";
+        }
+        if (d.Namespace == "Mochi.DearImGui.Backends.OpenGL3")
+        {
+            return "OpenGL3ImBackend";
+        }
+        if (d.Namespace == "Mochi.DearImGui.Backends.Glfw")
+        {
+            return "GlfwImBackend";
+        }
+        if (d.Namespace == "Mochi.DearImGui.Backends.Win32")
+        {
+            return "Win32ImBackend";
+        }
+        return "Globals";
+    }
 ).Transform(library);
 library = new AutoNameUnnamedParametersTransformation().Transform(library);
 library = new CreateTrampolinesTransformation()

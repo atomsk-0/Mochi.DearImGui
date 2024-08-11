@@ -2,7 +2,9 @@
 using Biohazrd.CSharp;
 using Biohazrd.Expressions;
 using Biohazrd.Transformation;
+using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Mochi.DearImGui.Generator
 {
@@ -31,6 +33,33 @@ namespace Mochi.DearImGui.Generator
             }
             else
             { return declaration; }
+        }
+
+        protected override TransformationResult TransformFunction(TransformationContext context, TranslatedFunction declaration)
+        {
+            if (declaration.Name.Contains("ImGui_Impl"))
+            {
+                string cleanedName = declaration.Name.Replace("ImGui_ImplWin32_", "")
+                    .Replace("ImGui_ImplDX9_", "")
+                    .Replace("ImGui_ImplDX10_", "")
+                    .Replace("ImGui_ImplDX11_", "")
+                    .Replace("ImGui_ImplDX12_", "")
+                    .Replace("ImGui_ImplGlfw_", "")
+                    .Replace("ImGui_ImplOpenGL3_", "");
+                /*if (declaration.Namespace == null) return declaration;
+                string lastPartNamespace = declaration.Namespace!.Split('.').Last();
+                if (cleanedName.StartsWith(lastPartNamespace, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    cleanedName = cleanedName[lastPartNamespace.Length..];
+                }
+                if (cleanedName.StartsWith("_", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    cleanedName = cleanedName[1..];
+                }*/
+                return declaration with{ Name = cleanedName };
+            }
+
+            return declaration;
         }
     }
 }
