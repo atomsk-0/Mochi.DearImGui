@@ -95,7 +95,7 @@ foreach (string file in backendFiles)
 {
     string path = Path.Combine(imguiBackendDirectoryPath, file);
     if (File.Exists(path) == false) continue;
-    File.Copy(path, Path.Combine(imGuiSourceDirectoryPath, file));
+    File.Copy(path, Path.Combine(imGuiSourceDirectoryPath, file), true);
 }
 
 libraryBuilder.AddCommandLineArgument("--language=c++");
