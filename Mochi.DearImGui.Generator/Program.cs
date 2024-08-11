@@ -88,7 +88,12 @@ TranslatedLibraryBuilder libraryBuilder = new()
     }
 };
 
-string[] backendFiles = {"imgui_impl_win32.h", "imgui_impl_win32.cpp", "imgui_impl_dx9.h", "imgui_impl_dx9.cpp", "imgui_impl_dx12.h", "imgui_impl_dx12.cpp", "imgui_impl_opengl3.h", "imgui_impl_opengl3.cpp", "imgui_impl_glfw.h", "imgui_impl_glfw.cpp"};
+string[] backendFiles = {"imgui_impl_win32.h", "imgui_impl_win32.cpp", "imgui_impl_dx9.h", "imgui_impl_dx9.cpp", "imgui_impl_dx12.h", "imgui_impl_dx12.cpp", "imgui_impl_opengl3.h", "imgui_impl_opengl3.cpp", "imgui_impl_glfw.h", "imgui_impl_glfw.cpp", "imgui_impl_opengl3_loader.h"};
+
+Directory.CreateDirectory(Path.Combine(imGuiSourceDirectoryPath, "GLFW"));
+File.Copy(Path.Combine(imGuiSourceDirectoryPath, "examples", "libs", "glfw", "include", "GLFW", "glfw3.h"), Path.Combine(imGuiSourceDirectoryPath, "GLFW", "glfw3.h"), true);
+File.Copy(Path.Combine(imGuiSourceDirectoryPath, "examples", "libs", "glfw", "include", "GLFW", "glfw3native.h"), Path.Combine(imGuiSourceDirectoryPath, "GLFW", "glfw3native.h"), true);
+File.Copy(Path.Combine(imGuiSourceDirectoryPath, "examples", "libs", "glfw", "lib-vc2010-64", "glfw3.lib"), Path.Combine(imGuiSourceDirectoryPath, "glfw3.lib"), true);
 
 // Copy backend files to sourceDirectory temporarily
 foreach (string file in backendFiles)
@@ -109,6 +114,7 @@ foreach (string file in backendFiles)
 {
     string path = Path.Combine(imGuiSourceDirectoryPath, file);
     if (File.Exists(path) == false || file.Split('.').Last() != "h") continue;
+    Console.WriteLine("Adding backend header file: " + file);
     libraryBuilder.AddFile(path);
 }
 
@@ -130,6 +136,7 @@ Console.WriteLine("=============================================================
 
 library = new RemoveUnneededDeclarationsTransformation().Transform(library);
 library = new ImGuiEnumTransformation().Transform(library);
+//library = new ImGuiImplTransformation().Transform(library);
 
 BrokenDeclarationExtractor brokenDeclarationExtractor = new();
 library = brokenDeclarationExtractor.Transform(library);
@@ -223,6 +230,8 @@ foreach (string file in backendFiles)
     if (File.Exists(path) == false) continue;
     File.Delete(path);
 }
+
+Directory.Delete(Path.Combine(imGuiSourceDirectoryPath, "GLFW"), true);
 
 outputSession.Dispose();
 return 0;

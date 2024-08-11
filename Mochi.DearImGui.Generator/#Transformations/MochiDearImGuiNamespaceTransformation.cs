@@ -37,7 +37,7 @@ namespace Mochi.DearImGui.Generator
             {
                 return declaration with
                 {
-                    Namespace = namespaceName
+                    Namespace = namespaceName,
                 };
             }
 
@@ -45,7 +45,7 @@ namespace Mochi.DearImGui.Generator
 
             if (Path.GetFileName(declaration.File.FilePath) == "imgui_internal.h")
             { namespaceName += ".Internal"; }
-            else if (Path.GetFileName(Path.GetDirectoryName(declaration.File.FilePath)) == "backends")
+            else if (new FileInfo(declaration.File.FilePath).Name.Contains("_impl_"))
             {
                 namespaceName += ".Backends";
 
@@ -64,6 +64,8 @@ namespace Mochi.DearImGui.Generator
                     { namespaceName += ".Direct3D10"; }
                     else if (backendName.SequenceEqual("dx11"))
                     { namespaceName += ".Direct3D11"; }
+                    else if (backendName.SequenceEqual("dx12"))
+                    { namespaceName += ".Direct3D12"; }
                     else if (backendName.SequenceEqual("opengl2"))
                     { namespaceName += ".OpenGL2"; }
                     else if (backendName.SequenceEqual("opengl3"))
@@ -76,6 +78,12 @@ namespace Mochi.DearImGui.Generator
                     { namespaceName += $".{Char.ToUpperInvariant(backendName[0])}{backendName.Slice(1).ToString()}"; }
                 }
             }
+            /*else if (Path.GetFileName(Path.GetDirectoryName(declaration.File.FilePath)) == "backends")
+            {
+
+            }*/
+
+
 
             // Retain namespaces form Dear ImGui (if present) with the exception of the main one
             if (declaration.Namespace is not null and not "ImGui")
