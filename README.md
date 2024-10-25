@@ -1,15 +1,11 @@
+Fork of [MochiLibraries/Mochi.DearImGui](https://github.com/MochiLibraries/Mochi.DearImGui), Modified for my other projects, this fork removes the OpenTK backend and instead uses imgui provided backends by including them for source generation.
+
 # Dear ImGui-flavored Mochi
 
 [![MIT Licensed](https://img.shields.io/github/license/mochilibraries/mochi.dearimgui?style=flat-square)](LICENSE.txt)
-[![CI Status](https://img.shields.io/github/actions/workflow/status/mochilibraries/mochi.dearimgui/Mochi.DearImGui.yml?branch=main&style=flat-square&label=CI)](https://github.com/MochiLibraries/Mochi.DearImGui/actions?query=workflow%3AMochi.DearImGui+branch%3Amain)
-[![NuGet Version](https://img.shields.io/nuget/v/Mochi.DearImGui?style=flat-square)](https://www.nuget.org/packages/Mochi.DearImGui/)
-[![Sponsor](https://img.shields.io/badge/sponsor-%E2%9D%A4-lightgrey?logo=github&style=flat-square)](https://github.com/sponsors/PathogenDavid)
+[![Sponsor](https://img.shields.io/badge/sponsor_(original_author)-%E2%9D%A4-lightgrey?logo=github&style=flat-square)](https://github.com/sponsors/PathogenDavid)
 
 This repo contains C# bindings for [Dear ImGui](https://github.com/ocornut/imgui/) as well as a [Biohazrd](https://github.com/MochiLibraries/Biohazrd)-powered generator for generating them.
-
-We currently publish NuGet packages for .NET 6 on Windows x64 and Linux x64 (glibc >= 2.27). The `Mochi.DearImGui` package currently only provides Windows support, it will be a cross-platform meta package in the future. `Mochi.DearImGui.linux-x64` provides support for Linux.
-
-A backend for OpenTK is published as `Mochi.DearImGui.OpenTK`, and is platform-independent. See [`Mochi.DearImGui.Sample`](Mochi.DearImGui.Sample/Program.cs) for example usage.
 
 In contrast to other C# bindings for Dear ImGui, this one interacts with the C++ API directly and is lower-level. If you need high-level bindings consider using the excellent [ImGui.NET](https://github.com/mellinoe/ImGui.NET) instead.
 
@@ -48,8 +44,4 @@ Package | Tested Version
 1. Ensure Git submodules are up-to-date with `git submodule update --init --recursive`
 2. Build and run `generate.cmd` (Windows) or `generate.sh` (Linux) from the repository root
 
-### Building and running the sample
-
-Without modification the sample will depend on the bindings being built locally as instructed above.
-
-Simply build+run `Mochi.DearImGui.Sample` as you would any other .NET project. (IE: Using F5 in Visual Studio or `dotnet run --project Mochi.DearImGui.Sample`.)
+(Sample project is not included)
