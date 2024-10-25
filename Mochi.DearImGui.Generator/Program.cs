@@ -93,7 +93,7 @@ string[] backendFiles = {"imgui_impl_win32.h", "imgui_impl_win32.cpp", "imgui_im
 Directory.CreateDirectory(Path.Combine(imGuiSourceDirectoryPath, "GLFW"));
 File.Copy(Path.Combine(imGuiSourceDirectoryPath, "examples", "libs", "glfw", "include", "GLFW", "glfw3.h"), Path.Combine(imGuiSourceDirectoryPath, "GLFW", "glfw3.h"), true);
 File.Copy(Path.Combine(imGuiSourceDirectoryPath, "examples", "libs", "glfw", "include", "GLFW", "glfw3native.h"), Path.Combine(imGuiSourceDirectoryPath, "GLFW", "glfw3native.h"), true);
-File.Copy(Path.Combine(imGuiSourceDirectoryPath, "examples", "libs", "glfw", "lib-vc2010-64", "glfw3.lib"), Path.Combine(imGuiSourceDirectoryPath, "glfw3.lib"), true);
+//File.Copy(Path.Combine(imGuiSourceDirectoryPath, "examples", "libs", "glfw", "lib-vc2010-64", "glfw3.lib"), Path.Combine(imGuiSourceDirectoryPath, "glfw3.lib"), true);
 
 // Copy backend files to sourceDirectory temporarily
 foreach (string file in backendFiles)

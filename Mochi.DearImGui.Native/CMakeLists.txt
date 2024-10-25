@@ -17,9 +17,9 @@ endif()
 
 # Link GLFW library
 if (WIN32)
-    set(GLFW_LIB "C:/Users/Mikael/projects/Mochi.DearImGui/external/imgui/glfw3.lib")
+    set(GLFW_LIB "${CMAKE_CURRENT_SOURCE_DIR}/glfw3.lib") # glfw3.lib
 else()
-    set(GLFW_LIB ${IMGUI_SOURCE_DIRECTORY}libglfw3.a)
+    set(GLFW_LIB "${CMAKE_CURRENT_SOURCE_DIR}libglfw3.a") # libglfw3.a
 endif()
 
 # Set output directories
