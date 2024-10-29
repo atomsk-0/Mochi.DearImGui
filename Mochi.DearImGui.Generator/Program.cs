@@ -12,6 +12,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
+//TODO: Maybe clean this up a bit
+//TODO: In some language cultures, the comma is used as a decimal separator. Not a big deal, but still makes user required to do manual changes.
+
 if (args.Length != 3)
 {
     Console.Error.WriteLine("Usage:");
@@ -39,6 +42,7 @@ else if (OperatingSystem.IsLinux())
     importLibraryName = "libMochi.DearImGui.Native.so";
     itaniumExportMode = true;
 }
+//TODO: Add MacOS Support
 else
 {
     Console.Error.WriteLine($"'{RuntimeInformation.OSDescription}' is not supported by this generator.");
@@ -46,12 +50,12 @@ else
 }
 
 string imGuiSourceDirectoryPath = Path.GetFullPath(args[0]);
-string imguiBackendDirectoryPath = Path.Combine(imGuiSourceDirectoryPath, "backends");
+string imGuiBackendsDirectoryPath = Path.Combine(imGuiSourceDirectoryPath, "backends");
 string imGuiHeaderFilePath = Path.Combine(imGuiSourceDirectoryPath, "imgui.h");
 
 string dearImGuiNativeRootPath = Path.GetFullPath(args[1]);
-string imguiLibFilePath = Path.Combine(dearImGuiNativeRootPath, "..", "bin", "Mochi.DearImGui.Native", dotNetRid, canonicalBuildVariant, importLibraryName);
-string imguiInlineExporterFilePath = Path.Combine(dearImGuiNativeRootPath, "InlineExportHelper.gen.cpp");
+string imGuiLibFilePath = Path.Combine(dearImGuiNativeRootPath, "..", "bin", "Mochi.DearImGui.Native", dotNetRid, canonicalBuildVariant, importLibraryName);
+string imGuiInlineExporterFilePath = Path.Combine(dearImGuiNativeRootPath, "InlineExportHelper.gen.cpp");
 string nativeBuildScript = Path.Combine(dearImGuiNativeRootPath, nativeRuntimeBuildScript);
 
 string outputDirectoryPath = Path.GetFullPath(args[2]);
@@ -90,15 +94,19 @@ TranslatedLibraryBuilder libraryBuilder = new()
 
 string[] backendFiles = {"imgui_impl_win32.h", "imgui_impl_win32.cpp", "imgui_impl_dx9.h", "imgui_impl_dx9.cpp", "imgui_impl_dx11.h", "imgui_impl_dx11.cpp", "imgui_impl_dx12.h", "imgui_impl_dx12.cpp", "imgui_impl_vulkan.h", "imgui_impl_vulkan.cpp", "imgui_impl_glfw.h", "imgui_impl_glfw.cpp", "imgui_impl_opengl3_loader.h"};
 
+// Copy GLFW headers to sourceDirectory
 Directory.CreateDirectory(Path.Combine(imGuiSourceDirectoryPath, "GLFW"));
 File.Copy(Path.Combine(imGuiSourceDirectoryPath, "examples", "libs", "glfw", "include", "GLFW", "glfw3.h"), Path.Combine(imGuiSourceDirectoryPath, "GLFW", "glfw3.h"), true);
 File.Copy(Path.Combine(imGuiSourceDirectoryPath, "examples", "libs", "glfw", "include", "GLFW", "glfw3native.h"), Path.Combine(imGuiSourceDirectoryPath, "GLFW", "glfw3native.h"), true);
-//File.Copy(Path.Combine(imGuiSourceDirectoryPath, "examples", "libs", "glfw", "lib-vc2010-64", "glfw3.lib"), Path.Combine(imGuiSourceDirectoryPath, "glfw3.lib"), true);
+
+// Copy Vulkan headers to sourceDirectory
+DirectoryCopyHelper.CopyDirectory(Path.Combine(Directory.GetCurrentDirectory(), "vulkan-include"), Path.Combine(imGuiSourceDirectoryPath), true);
+
 
 // Copy backend files to sourceDirectory temporarily
 foreach (string file in backendFiles)
 {
-    string path = Path.Combine(imguiBackendDirectoryPath, file);
+    string path = Path.Combine(imGuiBackendsDirectoryPath, file);
     if (File.Exists(path) == false) continue;
     File.Copy(path, Path.Combine(imGuiSourceDirectoryPath, file), true);
 }
@@ -123,12 +131,10 @@ TranslatedLibrary library = libraryBuilder.Create();
 TranslatedLibraryConstantEvaluator constantEvaluator = libraryBuilder.CreateConstantEvaluator();
 
 // Start output session
-using OutputSession outputSession = new()
-{
-    AutoRenameConflictingFiles = true,
-    BaseOutputDirectory = outputDirectoryPath,
-    ConservativeFileLogging = false
-};
+using OutputSession outputSession = new();
+outputSession.AutoRenameConflictingFiles = true;
+outputSession.BaseOutputDirectory = outputDirectoryPath;
+outputSession.ConservativeFileLogging = false;
 
 // Apply transformations
 Console.WriteLine("==============================================================================");
@@ -189,6 +195,10 @@ library = new MoveLooseDeclarationsIntoTypesTransformation
         {
             return "Win32ImBackend";
         }
+        if (d.Namespace == "Mochi.DearImGui.Backends.Vulkan")
+        {
+            return "VulkanImBackend";
+        }
         return "Globals";
     }
 ).Transform(library);
@@ -206,7 +216,7 @@ library = new ImVersionConstantsTransformation(library, constantEvaluator).Trans
 library = new VectorTypeTransformation().Transform(library);
 
 // Generate the inline export helper
-library = new InlineExportHelper(outputSession, imguiInlineExporterFilePath) { __ItaniumExportMode = itaniumExportMode }.Transform(library);
+library = new InlineExportHelper(outputSession, imGuiInlineExporterFilePath) { __ItaniumExportMode = itaniumExportMode }.Transform(library);
 
 // Rebuild the native DLL so that the librarian can access a version of the library including the inline-exported functions
 Console.WriteLine("Rebuilding Mochi.DearImGui.Native...");
@@ -222,7 +232,7 @@ LinkImportsTransformation linkImports = new()
     TrackVerboseImportInformation = true,
     WarnOnAmbiguousSymbols = true
 };
-linkImports.AddLibrary(imguiLibFilePath);
+linkImports.AddLibrary(imGuiLibFilePath);
 library = linkImports.Transform(library);
 
 // Perform validation
@@ -267,7 +277,4 @@ foreach (string file in backendFiles)
     File.Delete(path);
 }
 
-Directory.Delete(Path.Combine(imGuiSourceDirectoryPath, "GLFW"), true);
-
-outputSession.Dispose();
 return 0;

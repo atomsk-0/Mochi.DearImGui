@@ -18,6 +18,7 @@ endif()
 # Link GLFW library
 if (WIN32)
     set(GLFW_LIB "${CMAKE_CURRENT_SOURCE_DIR}/glfw3.lib") # glfw3.lib
+    set(VULKAN_LIB "${CMAKE_CURRENT_SOURCE_DIR}/vulkan-1.lib") # vulkan-1.lib
 else()
     set(GLFW_LIB "${CMAKE_CURRENT_SOURCE_DIR}libglfw3.a") # libglfw3.a
 endif()
@@ -36,6 +37,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${OUTPUT_DIRECTORY}")
 
 file(GLOB IMGUI_SOURCES "${IMGUI_SOURCE_DIRECTORY}*.cpp")
 link_libraries(${GLFW_LIB})
+link_libraries(${VULKAN_LIB})
 
 if (WIN32)
    link_libraries(legacy_stdio_definitions)
