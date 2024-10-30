@@ -1,7 +1,6 @@
-[submodule "external/Biohazrd"]
-	path = external/Biohazrd
-	url = https://github.com/MochiLibraries/Biohazrd.git
-	branch = main
 [submodule "external/imgui"]
 	path = external/imgui
 	url = https://github.com/ocornut/imgui.git
+[submodule "external/Biohazrd"]
+	path = external/Biohazrd
+	url = https://github.com/atomsk-0/Biohazrd.git
