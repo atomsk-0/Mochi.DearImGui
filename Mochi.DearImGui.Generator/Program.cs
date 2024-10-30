@@ -13,7 +13,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 //TODO: Maybe clean this up a bit
-//TODO: In some language cultures, the comma is used as a decimal separator. Not a big deal, but still makes user required to do manual changes.
 
 if (args.Length != 3)
 {
