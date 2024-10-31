@@ -91,15 +91,12 @@ TranslatedLibraryBuilder libraryBuilder = new()
     }
 };
 
-string[] backendFiles = {"imgui_impl_win32.h", "imgui_impl_win32.cpp", "imgui_impl_dx9.h", "imgui_impl_dx9.cpp", "imgui_impl_dx11.h", "imgui_impl_dx11.cpp", "imgui_impl_dx12.h", "imgui_impl_dx12.cpp", "imgui_impl_vulkan.h", "imgui_impl_vulkan.cpp", "imgui_impl_glfw.h", "imgui_impl_glfw.cpp", "imgui_impl_opengl3_loader.h"};
+string[] backendFiles = {"imgui_impl_win32.h", "imgui_impl_win32.cpp", "imgui_impl_dx9.h", "imgui_impl_dx9.cpp", "imgui_impl_dx11.h", "imgui_impl_dx11.cpp", "imgui_impl_dx12.h", "imgui_impl_dx12.cpp", "imgui_impl_opengl3.h", "imgui_impl_opengl3.cpp", "imgui_impl_glfw.h", "imgui_impl_glfw.cpp", "imgui_impl_opengl3_loader.h"};
 
 // Copy GLFW headers to sourceDirectory
 Directory.CreateDirectory(Path.Combine(imGuiSourceDirectoryPath, "GLFW"));
 File.Copy(Path.Combine(imGuiSourceDirectoryPath, "examples", "libs", "glfw", "include", "GLFW", "glfw3.h"), Path.Combine(imGuiSourceDirectoryPath, "GLFW", "glfw3.h"), true);
 File.Copy(Path.Combine(imGuiSourceDirectoryPath, "examples", "libs", "glfw", "include", "GLFW", "glfw3native.h"), Path.Combine(imGuiSourceDirectoryPath, "GLFW", "glfw3native.h"), true);
-
-// Copy Vulkan headers to sourceDirectory
-DirectoryCopyHelper.CopyDirectory(Path.Combine(Directory.GetCurrentDirectory(), "vulkan-include"), Path.Combine(imGuiSourceDirectoryPath), true);
 
 
 // Copy backend files to sourceDirectory temporarily

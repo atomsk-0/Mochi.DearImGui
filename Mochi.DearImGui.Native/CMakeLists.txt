@@ -37,7 +37,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${OUTPUT_DIRECTORY}")
 
 file(GLOB IMGUI_SOURCES "${IMGUI_SOURCE_DIRECTORY}*.cpp")
 link_libraries(${GLFW_LIB})
-link_libraries(${VULKAN_LIB})
+# link_libraries(${VULKAN_LIB})
 
 if (WIN32)
    link_libraries(legacy_stdio_definitions)
